@@ -1,0 +1,37 @@
+version: "3.9"
+
+services:
+  web:
+    build: ./app-web
+    container_name: app-web
+    restart: always
+    ports:
+      - "3000:3000"
+    depends_on:
+      - api
+
+  api:
+    build: ./app-api
+    container_name: app-api
+    restart: always
+    ports:
+      - "7103:7103"
+    depends_on:
+      - db
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+
+  db:
+    image: postgres:15
+    container_name: postgres-db
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTRGRES_DB: ${POSTGRES_DB}
+    ports:
+      - "5431:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+volumes:
+  pgdata:
